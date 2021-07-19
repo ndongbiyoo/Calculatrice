@@ -1,27 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Calculatrice" default="quick-build">
+<project name="Calculatrice" default="phpunit">
 
 <!--OK les propriétés on été pris en compte-->
 <property name="phpunit" value="${basedir}/vendor/bin/phpunit"/>
+<property name="executor" value="C:\Users\NDONG Michel\AppData\Roaming\Composer\vendor\bin\phpunit.bat"/>
 
 <!--OK il permet de supprmer tous les fichiers qui se trouvent dans le répertoires de dépôt des artefacts-->
 	 <target name="clean" unless="clean.done" description="Cleanup build artifacts.">
         <delete dir="${basedir}/app/rapports"/>
         <property name="clean.done" value="true"/>
         <echo message="Le repertoire des artefacts de livraison est desormais vide"/>
+        <echo message="Debut des tests auto"/>
     </target>
 
-    <target name="quick-build" unless="test.done" description="On fait une série de tests sans couverture de code" depends="clean">
-    	<echo message="Debut des tests auto"/>
-    	<exec executable="${phpunit}" failonerror="true" taskname="phpunit">
-    		 <arg value="--configuration"/>
-    		 <arg path="${basedir}/build/phpunit.xml"/>
-    		 <arg path="tests"/>
-    		 <arg value="--no-coverage"/>
-    		 <property name="test.done" value="true"/>
+    <target name="lint" unless="lint.done" description="Perform syntax check of PHP sourcecode files.">
+        <apply executable="php" failonerror="true" taskname="lint">
+            <arg value="-l"/>
+            <fileset dir="${basedir}/app">
+                <include name="**/*.php"/>
+                <!-- modified/ -->
+            </fileset>
+            <fileset dir="${basedir}/tests">
+                <include name="**/*.php"/>
+                <!-- modified/ -->
+            </fileset>
+        </apply>
+        <property name="lint.done" value="true"/>
+    </target>
+
+    <target name="phpunit" unless="phpunit.done" depends="clean,lint">
+    	<exec executable="${executor}" resultproperty="result.phpunit" taskname="phpunit">
+    		
     	</exec>
+    	<property name="phpunit.done" value="true"/>
     </target>
 
-	
+
+    
 
 </project>
