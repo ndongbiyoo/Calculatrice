@@ -1,10 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Calculatrice" default="phpunit">
+<project name="Calculatrice" default="quick-build">
 
+<!--OK les propriétés on été pris en compte-->
+<property name="phpunit" value="${basedir}/vendor/bin/phpunit"/>
+
+<!--OK il permet de supprmer tous les fichiers qui se trouvent dans le répertoires de dépôt des artefacts-->
 	 <target name="clean" unless="clean.done" description="Cleanup build artifacts.">
         <delete dir="${basedir}/app/rapports"/>
         <property name="clean.done" value="true"/>
+        <echo message="Le repertoire des artefacts de livraison est desormais vide"/>
     </target>
 
+    <target name="quick-build" unless="test.done" description="On fait une série de tests sans couverture de code" depends="clean">
+    	<echo message="Debut des tests auto"/>
+    	<exec executable="${phpunit}" failonerror="true" taskname="phpunit">
+    		 <arg value="--configuration"/>
+    		 <arg path="${basedir}/build/phpunit.xml"/>
+    		 <arg path="tests"/>
+    		 <arg value="--no-coverage"/>
+    		 <property name="test.done" value="true"/>
+    	</exec>
+    </target>
+
+	
 
 </project>
